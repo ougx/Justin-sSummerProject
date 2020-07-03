@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-###########################################################################
-## Python code generated with wxFormBuilder (version Oct 26 2018)
-## http://www.wxformbuilder.org/
-##
-## PLEASE DO *NOT* EDIT THIS FILE!
-###########################################################################
-
 import wx
 import wx.xrc
 import wx.adv
@@ -161,18 +152,21 @@ class MyFrame1 ( wx.Frame ):
         #from matplot import second figure
         #FIGURE TWO Y-AXIS
         self.m_panel_both.figure = matplotlib.figure.Figure()
-        self.axes_both = self.m_panel_both.figure.add_subplot(111)
+        self.axes_both = self.m_panel_both.figure.add_subplot(111)        
+        self.canvas_both = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)        
                
         #from matplot import second figure
         #FIGURE DISCHARGE
         self.m_panel_discharge.figure = matplotlib.figure.Figure()
         self.axes_discharge = self.m_panel_discharge.figure.add_subplot(111)
+        self.canvas_discharge = FigureCanvas(self.m_panel_discharge, -1, self.m_panel_discharge.figure)   
   
         
         #from matplot import second figure
         #FIGURE PRECIPITATION
         self.m_panel_precip.figure = matplotlib.figure.Figure()
         self.axes_precip = self.m_panel_precip.figure.add_subplot(111)
+        self.canvas_precip = FigureCanvas(self.m_panel_precip, -1, self.m_panel_precip.figure)   
 
         # Connect Events
         self.m_datePicker1.Bind( wx.adv.EVT_DATE_CHANGED, self.startingdate1 )
@@ -232,7 +226,7 @@ class MyFrame1 ( wx.Frame ):
         print(self.dataflow.set_index('datetime').columns)
         
         pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_discharge)
-        self.canvas = FigureCanvas(self.m_panel_discharge, -1, self.m_panel_discharge)
+        self.canvas_discharge.draw()
       
         #Discharge
         #ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
@@ -266,7 +260,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_discharge)
         else:
           df.resample('A').mean().plot(ax=self.axes_discharge)
-        self.canvas = FigureCanvas(self.m_panel_discharge, -1, self.m_panel_discharge)
+        self.canvas_discharge.draw()
 
 # USGS CODE # Use GAUGE 0208732885 or 01104430 
 #USGS Precipitation Code
@@ -283,8 +277,7 @@ class MyFrame1 ( wx.Frame ):
         print(self.rainflow.set_index('datetime').columns)
         
         pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_precip)
-        self.canvas = FigureCanvas(self.m_panel_precip, -1, self.m_panel_precip.figure)
-
+        self.canvas_precip.draw()
         #Precip
         #ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
         #self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)     
@@ -317,7 +310,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_precip)
         else:
           df.resample('A').mean().plot(ax=self.axes_precip)
-        self.canvas = FigureCanvas(self.m_panel_precip, -1, self.m_panel_precip.figure)
+        self.canvas_precip.draw()
 
 
     def changeFreq1( self, event ):
@@ -331,7 +324,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_both)
         else:
           df.resample('A').mean().plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)        
+        self.canvas_both.draw() 
 
 #https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2001 maybe use this for climate data
 
@@ -340,4 +333,3 @@ app = wx.App(redirect=True)
 frame = MyFrame1(None)
 frame.Show()
 app.MainLoop()
-
