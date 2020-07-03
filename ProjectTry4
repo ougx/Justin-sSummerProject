@@ -113,15 +113,15 @@ class MyFrame1 ( wx.Frame ):
 
         bSizer5 = wx.BoxSizer( wx.HORIZONTAL )
 
-        self.m_panel1 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_panel1.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+        self.m_panel_discharge = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel_discharge.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
 
-        bSizer5.Add( self.m_panel1, 1, wx.EXPAND |wx.ALL, 5 )
+        bSizer5.Add( self.m_panel_discharge, 1, wx.EXPAND |wx.ALL, 5 )
 
-        self.m_panel3 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_panel3.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+        self.m_panel_precip = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel_precip.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
 
-        bSizer5.Add( self.m_panel3, 1, wx.EXPAND |wx.ALL, 5 )
+        bSizer5.Add( self.m_panel_precip, 1, wx.EXPAND |wx.ALL, 5 )
 
         m_radioBox1Choices = [ u"Daily", u"Monthly", u"Annually" ]
         self.m_radioBox1 = wx.RadioBox( self, wx.ID_ANY, u"wxRadioBox", wx.DefaultPosition, wx.DefaultSize, m_radioBox1Choices, 1, wx.RA_SPECIFY_COLS )
@@ -138,10 +138,10 @@ class MyFrame1 ( wx.Frame ):
 
         bSizer6 = wx.BoxSizer( wx.HORIZONTAL )
 
-        self.m_panel2 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_panel2.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+        self.m_panel_both = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel_both.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
 
-        bSizer6.Add( self.m_panel2, 1, wx.EXPAND |wx.ALL, 5 )
+        bSizer6.Add( self.m_panel_both, 1, wx.EXPAND |wx.ALL, 5 )
 
         m_radioBox2Choices = [ u"Daily", u"Monthly", u"Annually" ]
         self.m_radioBox2 = wx.RadioBox( self, wx.ID_ANY, u"wxRadioBox", wx.DefaultPosition, wx.DefaultSize, m_radioBox2Choices, 1, wx.RA_SPECIFY_COLS )
@@ -160,19 +160,19 @@ class MyFrame1 ( wx.Frame ):
 
         #from matplot import second figure
         #FIGURE TWO Y-AXIS
-        self.m_panel2.figure = matplotlib.figure.Figure()
-        self.axes3 = self.m_panel2.figure.add_subplot(111)
+        self.m_panel_both.figure = matplotlib.figure.Figure()
+        self.axes_both = self.m_panel_both.figure.add_subplot(111)
                
         #from matplot import second figure
         #FIGURE DISCHARGE
-        self.m_panel1.figure = matplotlib.figure.Figure()
-        self.axes_discharge = self.m_panel1.figure.add_subplot(111)
+        self.m_panel_discharge.figure = matplotlib.figure.Figure()
+        self.axes_discharge = self.m_panel_discharge.figure.add_subplot(111)
   
         
         #from matplot import second figure
         #FIGURE PRECIPITATION
-        self.m_panel3.figure = matplotlib.figure.Figure()
-        self.axes_precip = self.m_panel3.figure.add_subplot(111)
+        self.m_panel_precip.figure = matplotlib.figure.Figure()
+        self.axes_precip = self.m_panel_precip.figure.add_subplot(111)
 
         # Connect Events
         self.m_datePicker1.Bind( wx.adv.EVT_DATE_CHANGED, self.startingdate1 )
@@ -232,27 +232,27 @@ class MyFrame1 ( wx.Frame ):
         print(self.dataflow.set_index('datetime').columns)
         
         pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_discharge)
-        self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel1.figure)
+        self.canvas = FigureCanvas(self.m_panel_discharge, -1, self.m_panel_discharge)
       
         #Discharge
-        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel2.figure)
+        #ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
+        #self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)
             
         #Precip
-        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel2.figure)     
+        #ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
+        #self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)     
 
-        ser1.plot(ax=self.axes_both)
-        self.axes.set_ylabel('Discharge')
+        #ser1.plot(ax=self.axes_both)
+        #self.axes_both.set_ylabel('Discharge')
         
-        ax1 = self.axes_both.twinx()
-        ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
-        ax1.invert_yaxis()
-        ax1.set_ylabel('Precip')
+        #ax1 = self.axes_both.twinx()
+        #ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
+        #ax1.invert_yaxis()
+        #ax1.set_ylabel('Precip')
         
-        self.wxPnl.figure.tight_layout()
+        #self.wxPnl.figure.tight_layout()
         
-        self.canvas.draw()
+        #self.canvas.draw()
                        
 # NEED TO DEVELOP DATE CODE AND TWO-Y-AXIS CODE
     def changeFreq( self, event ):
@@ -266,7 +266,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_discharge)
         else:
           df.resample('A').mean().plot(ax=self.axes_discharge)
-        self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel1.figure)
+        self.canvas = FigureCanvas(self.m_panel_discharge, -1, self.m_panel_discharge)
 
 # USGS CODE # Use GAUGE 0208732885 or 01104430 
 #USGS Precipitation Code
@@ -283,28 +283,28 @@ class MyFrame1 ( wx.Frame ):
         print(self.rainflow.set_index('datetime').columns)
         
         pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_precip)
-        self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel3.figure)
+        self.canvas = FigureCanvas(self.m_panel_precip, -1, self.m_panel_precip.figure)
 
         #Precip
-        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel2.figure)     
+        #ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
+        #self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)     
 
         #Discharge
-        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel2.figure)
+        #ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
+        #self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)
      
 
-        ser1.plot(ax=self.axes_both)
-        self.axes.set_ylabel('Discharge')
+        #ser1.plot(ax=self.axes_both)
+        #self.axes_both.set_ylabel('Discharge')
         
-        ax1 = self.axes_both.twinx()
-        ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
-        ax1.invert_yaxis()
-        ax1.set_ylabel('Precip')
+        #ax1 = self.axes_both.twinx()
+        #ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
+        #ax1.invert_yaxis()
+        #ax1.set_ylabel('Precip')
         
-        self.wxPnl.figure.tight_layout()
+        #self.wxPnl.figure.tight_layout()
         
-        self.canvas.draw()
+        #self.canvas.draw()
         
     def changeFreq2( self, event ):
         self.axes_precip.clear()
@@ -317,23 +317,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_precip)
         else:
           df.resample('A').mean().plot(ax=self.axes_precip)
-        self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel3.figure)
-
-    #def makePlot( self, event ):
-        #ser1 = pd.Series([1, 2, 3, 4, 3, 2, 1])
-        #ser2 = pd.Series([0.01, 0.02, 0.03, 0.01] )
-        
-        #ser1.plot(ax=self.axes)
-        #self.axes.set_ylabel('Discharge')
-        
-        #ax1 = self.axes.twinx()
-        #ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
-        #ax1.invert_yaxis()
-        #ax1.set_ylabel('Precip')
-        
-        #self.wxPnl.figure.tight_layout()
-        
-        #self.canvas.draw()
+        self.canvas = FigureCanvas(self.m_panel_precip, -1, self.m_panel_precip.figure)
 
 
     def changeFreq1( self, event ):
@@ -347,7 +331,7 @@ class MyFrame1 ( wx.Frame ):
           df.resample('M').mean().plot(ax=self.axes_both)
         else:
           df.resample('A').mean().plot(ax=self.axes_both)
-        self.canvas = FigureCanvas(self.m_panel2, -1, self.m_panel2.figure)        
+        self.canvas = FigureCanvas(self.m_panel_both, -1, self.m_panel_both.figure)        
 
 #https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2001 maybe use this for climate data
 
@@ -356,3 +340,4 @@ app = wx.App(redirect=True)
 frame = MyFrame1(None)
 frame.Show()
 app.MainLoop()
+
