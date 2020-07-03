@@ -166,13 +166,13 @@ class MyFrame1 ( wx.Frame ):
         #from matplot import second figure
         #FIGURE DISCHARGE
         self.m_panel1.figure = matplotlib.figure.Figure()
-        self.axes1 = self.m_panel1.figure.add_subplot(111)
+        self.axes_discharge = self.m_panel1.figure.add_subplot(111)
   
         
         #from matplot import second figure
         #FIGURE PRECIPITATION
         self.m_panel3.figure = matplotlib.figure.Figure()
-        self.axes2 = self.m_panel3.figure.add_subplot(111)
+        self.axes_precip = self.m_panel3.figure.add_subplot(111)
 
         # Connect Events
         self.m_datePicker1.Bind( wx.adv.EVT_DATE_CHANGED, self.startingdate1 )
@@ -180,7 +180,7 @@ class MyFrame1 ( wx.Frame ):
         self.m_button1.Bind( wx.EVT_BUTTON, self.downloadUSGS )
         self.m_datePicker4.Bind( wx.adv.EVT_DATE_CHANGED, self.startingdate2 )
         self.m_datePicker3.Bind( wx.adv.EVT_DATE_CHANGED, self.endingdate2 )
-        self.m_button2.Bind( wx.EVT_BUTTON, self.downloadACIS )
+        self.m_button2.Bind( wx.EVT_BUTTON, self.downloadPrecip )
         self.m_radioBox1.Bind( wx.EVT_RADIOBOX, self.changeFreq )
         self.m_radioBox3.Bind( wx.EVT_RADIOBOX, self.changeFreq2 )
         self.m_radioBox2.Bind( wx.EVT_RADIOBOX, self.changeFreq1 )
@@ -205,7 +205,7 @@ class MyFrame1 ( wx.Frame ):
     def endingdate2( self, event ):
         event.Skip()
 
-    def downloadACIS( self, event ):
+    def downloadPrecip( self, event ):
         event.Skip()
 
     def changeFreq( self, event ):
@@ -231,21 +231,21 @@ class MyFrame1 ( wx.Frame ):
         self.dataflow = pd.read_csv(url, comment='#', header=0, sep='\t')[1:].apply(lambda x: pd.to_numeric(x, errors='ignore') if x.name.endswith('_va') else x, axis=0)
         print(self.dataflow.set_index('datetime').columns)
         
-        pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes1)
+        pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_discharge)
         self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel1.figure)
       
         #Discharge
-        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes3)
+        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
         self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel2.figure)
             
         #Precip
-        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes3)
+        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
         self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel2.figure)     
 
-        ser1.plot(ax=self.axes3)
+        ser1.plot(ax=self.axes_both)
         self.axes.set_ylabel('Discharge')
         
-        ax1 = self.axes3.twinx()
+        ax1 = self.axes_both.twinx()
         ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
         ax1.invert_yaxis()
         ax1.set_ylabel('Precip')
@@ -256,22 +256,22 @@ class MyFrame1 ( wx.Frame ):
                        
 # NEED TO DEVELOP DATE CODE AND TWO-Y-AXIS CODE
     def changeFreq( self, event ):
-        self.axes1.clear()
+        self.axes_discharge.clear()
         rID = event.GetInt()
         df =  pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2])
         df.index = pd.DatetimeIndex(df.index)
         if rID == 0:
-          df.plot(ax= self.axes1)
+          df.plot(ax= self.axes_discharge)
         elif rID == 1:
-          df.resample('M').mean().plot(ax=self.axes1)
+          df.resample('M').mean().plot(ax=self.axes_discharge)
         else:
-          df.resample('A').mean().plot(ax=self.axes1)
+          df.resample('A').mean().plot(ax=self.axes_discharge)
         self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel1.figure)
 
 # USGS CODE # Use GAUGE 0208732885 or 01104430 
 #USGS Precipitation Code
 ## Check to make sure USGS Station ID is in Precip URL
-    def downloadACIS( self, event ):
+    def downloadPrecip( self, event ):
         #gauge_list = [self.m_textCtrl.GetValue()]
         gages = ('&site_no={}'.format(self.m_textCtrl3.GetValue()))
         period = '&period=&begin_date={}&end_date={}'.format('2000-01-01', '2019-12-31')
@@ -282,22 +282,22 @@ class MyFrame1 ( wx.Frame ):
         self.rainflow = pd.read_csv(url1, comment='#', header=0, sep='\t')[1:].apply(lambda x: pd.to_numeric(x, errors='ignore') if x.name.endswith('_va') else x, axis=0)
         print(self.rainflow.set_index('datetime').columns)
         
-        pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes2)
+        pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_precip)
         self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel3.figure)
 
         #Precip
-        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes3)
+        ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
         self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel2.figure)     
 
         #Discharge
-        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes3)
+        ser1 = pd.to_numeric(self.dataflow.set_index('datetime').iloc[:, 2]).plot(ax=self.axes_both)
         self.canvas = FigureCanvas(self.m_panel1, -1, self.m_panel2.figure)
      
 
-        ser1.plot(ax=self.axes3)
+        ser1.plot(ax=self.axes_both)
         self.axes.set_ylabel('Discharge')
         
-        ax1 = self.axes3.twinx()
+        ax1 = self.axes_both.twinx()
         ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
         ax1.invert_yaxis()
         ax1.set_ylabel('Precip')
@@ -307,16 +307,16 @@ class MyFrame1 ( wx.Frame ):
         self.canvas.draw()
         
     def changeFreq2( self, event ):
-        self.axes2.clear()
+        self.axes_precip.clear()
         rID = event.GetInt()
         df =  pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2])
         df.index = pd.DatetimeIndex(df.index)
         if rID == 0:
-          df.plot(ax= self.axes2)
+          df.plot(ax= self.axes_precip)
         elif rID == 1:
-          df.resample('M').mean().plot(ax=self.axes2)
+          df.resample('M').mean().plot(ax=self.axes_precip)
         else:
-          df.resample('A').mean().plot(ax=self.axes2)
+          df.resample('A').mean().plot(ax=self.axes_precip)
         self.canvas = FigureCanvas(self.m_panel3, -1, self.m_panel3.figure)
 
     #def makePlot( self, event ):
@@ -337,16 +337,16 @@ class MyFrame1 ( wx.Frame ):
 
 
     def changeFreq1( self, event ):
-        self.axes2.clear()
+        self.axes_both.clear()
         rID = event.GetInt()
         df =  pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2])
         df.index = pd.DatetimeIndex(df.index)
         if rID == 0:
-          df.plot(ax= self.axes2)
+          df.plot(ax= self.axes_both)
         elif rID == 1:
-          df.resample('M').mean().plot(ax=self.axes2)
+          df.resample('M').mean().plot(ax=self.axes_both)
         else:
-          df.resample('A').mean().plot(ax=self.axes2)
+          df.resample('A').mean().plot(ax=self.axes_both)
         self.canvas = FigureCanvas(self.m_panel2, -1, self.m_panel2.figure)        
 
 #https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2001 maybe use this for climate data
