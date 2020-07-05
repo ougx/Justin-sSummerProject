@@ -221,6 +221,19 @@ class MyFrame1 ( wx.Frame ):
     def changeFreq1( self, event ):
         event.Skip()
 
+#Need to Develop Code to Control Starting and Ending Dates!!! v
+    def startingdate1( self, event ):
+        event.Skip()
+
+    def endingdate1( self, event ):
+        event.Skip()
+
+    def startingdate2( self, event ):
+        event.Skip()
+
+    def endingdate2( self, event ):
+        event.Skip()
+
 # USGS CODE # Use GAUGE 01124151
 ## Check to make sure USGS Sation ID is in Discharge URL
 # Virtual event handlers, overide them in your derived class
