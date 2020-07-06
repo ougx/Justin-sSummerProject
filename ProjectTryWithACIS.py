@@ -291,7 +291,7 @@ class MyFrame1 ( wx.Frame ):
         
         ser2 = pd.to_numeric(self.rainflow.set_index('datetime').iloc[:, 2])
         ax1 = self.axes_both.twinx()
-        ser2.plot.bar(ax=ax1, color='C1', alpha=0.5)
+        ser2.plot(ax=ax1, color='C1', alpha=0.5)
         ax1.invert_yaxis()
         ax1.set_ylabel('Precip')
         self.m_panel_both.figure.tight_layout()
